@@ -53,6 +53,12 @@ namespace WeatherForecastApp.Controllers
             return View(viewModel);
         }
 
-        
+        [HttpGet]
+        public async Task<JsonResult> GetCities(string country)
+        {
+            // Call the repository method to get cities
+            var cities = await _WForecastRepository.GetCities(country);
+            return Json(cities);
+        }
     }
 }

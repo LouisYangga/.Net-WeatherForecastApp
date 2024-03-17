@@ -4,7 +4,7 @@
     ViewData["Title"] = "SearchByCity";
 }
 
-<div class="container">
+@* <div class="container">
     <form method="post" action="/WeatherForecast/SearchByCity">
         <div class="container">
             <h2>Search By City Name</h2>
@@ -15,4 +15,62 @@
             </div>
         </div>
     </form>
+</div> *@
+<div class="container">
+    <form method="post" action="/WeatherForecast/SearchByCity" id="searchForm">
+        <div class="container">
+            <h2>Search By City Name</h2>
+            <div>
+                <label for="SelectedCountry">Select Country:</label>
+                <select id="SelectedCountry" name="SelectedCountry" class="form-control">
+                    <option value="">-- Select Country --</option>
+                    <option value="Indonesia">-- Indonesia --</option>
+                    <option value="India">-- India --</option>
+                    <option value="Australia">-- Australia --</option>
+                </select>
+            </div>
+            <div>
+                <label for="SelectedCity">Select City:</label>
+                <select id="SelectedCity" name="SelectedCity" class="form-control">
+                    <option value="">-- Select City --</option>
+                </select>
+            </div>
+            <!-- Hidden input field to store the selected city value -->
+            <input type="hidden" id="CityName" name= "CityName" asp-for="CityName" class="form-control" /><br />
+            <div>
+                <button type="button" id="searchButton" asp-controller="WeatherForecast" asp-action="SearchByCity"  class="btn btn-outline-primary">Search</button>
+            </div>
+        </div>
+    </form>
 </div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#SelectedCountry').change(function () {
+                var country = $(this).val();
+                if (country) {
+                    $.getJSON('/WeatherForecast/GetCities', { country: country }, function (data) {
+                        var items = '<option value="">-- Select City --</option>';
+                        $.each(data, function (i, city) {
+                            items += '<option value="' + city + '">' + city + '</option>';
+                        });
+                        $('#SelectedCity').html(items);
+                    });
+                } else {
+                    $('#SelectedCity').html('<option value="">-- Select City --</option>');
+                }
+            });
+
+            // Update hidden input field value when city is selected
+            $('#SelectedCity').change(function () {
+                $('#CityName').val($(this).val());
+            });
+
+            // Submit form when search button is clicked
+            $('#searchButton').click(function () {
+                $('#searchForm').submit();
+            });
+        });
+    </script>
+}
